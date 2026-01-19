@@ -1,0 +1,74 @@
+# .github/workflows/cicd.yaml
+name: Go Service CI/CD
+
+on:
+  push:
+    branches: [ develop, main, 'release/**', 'release-**' ]
+  pull_request:
+    branches: [ develop, main ]
+
+jobs:
+  go-test-build:
+    #runs-on: arc-default-ub22-xs-set 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Display environment info
+        run: |
+          echo "========================================"
+          echo "Starting CI/CD Pipeline"
+          echo "========================================"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "========================================"
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23'
+          
+      - name: Verify Go installation
+        run: |
+          echo "========================================"
+          echo "Go Setup Completed"
+          echo "========================================"
+          go version
+          echo "GOPATH: $GOPATH"
+          echo "GOROOT: $GOROOT"
+          echo "========================================"   
+
+      - name: Run tests
+        run: |
+          echo "========================================"
+          echo "Starting Test Execution"
+          echo "========================================"
+          go test -v ./...
+          echo "========================================"
+          echo "✓ Tests completed successfully"
+          echo "========================================"
+
+      - name: Build
+        run: |
+          echo "========================================"
+          echo "Starting Build Process"
+          echo "========================================"
+          go build -v ./...
+          echo "========================================"
+          echo "✓ Build completed successfully"
+          echo "========================================"
+          
+      - name: Pipeline Summary
+        run: |
+          echo "========================================"
+          echo "CI/CD Pipeline Completed Successfully"
+          echo "========================================"
+          echo "All steps passed:"
+          echo "  ✓ Code checkout"
+          echo "  ✓ Go setup"
+          echo "  ✓ Tests"
+          echo "  ✓ Build"
+          echo "========================================"
